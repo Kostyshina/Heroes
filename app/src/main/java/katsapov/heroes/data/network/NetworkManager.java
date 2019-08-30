@@ -1,22 +1,29 @@
 package katsapov.heroes.data.network;
 
 
+import android.app.Activity;
 import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Scanner;
+import java.util.List;
+
+import katsapov.heroes.data.entitiy.Hero;
 
 import static katsapov.heroes.data.entitiy.Constants.DATA_URL;
 
 public class NetworkManager {
 
     //MAKE return string (Future*)
-    public static void sendRequestWithHttpURLConnection() {
+    public static void sendRequestWithHttpURLConnection(final Activity activity) {
         new Thread(new Runnable() {
             String line;
             String responeJson;
@@ -33,10 +40,6 @@ public class NetworkManager {
                     connection.setConnectTimeout(8000);
                     connection.setReadTimeout(8000);
                     InputStream in = connection.getInputStream();
-
-                    Scanner scanner = new Scanner(in);
-                    String line = scanner.next();
-
                     StringBuilder response = new StringBuilder();
                     reader = new BufferedReader(new InputStreamReader(in));
                     while ((line = reader.readLine()) != null) {
@@ -45,9 +48,22 @@ public class NetworkManager {
 
                     //string with data
                     responeJson = response.toString();
+                    Log.d("response", response.toString());
 
+                    Type listType = new TypeToken<List<Hero>>() {
+                    }.getType();
 
-                    Log.d("finish", response.toString());
+                    List<Hero> listOfHeroes = new Gson().fromJson(responeJson, listType);
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    });
+
+                    Log.d("listOfHeroes", String.valueOf(listOfHeroes));
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {

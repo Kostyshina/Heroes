@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import katsapov.heroes.R;
 import katsapov.heroes.data.entitiy.Hero;
+import katsapov.heroes.data.network.NetworkManager;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter;
 import katsapov.heroes.presentaition.adapter.PaginationListener;
 
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         } catch (Exception e) {
             e.printStackTrace();
         }*/
+
+        NetworkManager.sendRequestWithHttpURLConnection(this);
 
         SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
