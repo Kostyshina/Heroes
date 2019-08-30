@@ -11,9 +11,9 @@ public class HeroRepository {
     private NetworkManager networkManager;
     private List<Hero> listOfHeroes;
 
-    public List<Hero> getHeroes() {
+    public List<Hero> getHeroes(int page) {
         //String object  = NetworkManager.sendRequestWithHttpURLConnection(); //ВЕРНЕТ СТРОКУ
-        // listOfHeroes = HeroParser.parseData(object); //сюда закинем эту строку и распарсим
+       //  listOfHeroes = HeroParser.parseData(data); //сюда закинем эту строку и распарсим
         return listOfHeroes;
     }
 }
