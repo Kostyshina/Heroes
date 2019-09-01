@@ -1,8 +1,10 @@
 package katsapov.heroes.presentaition.mvp;
 
 import android.os.Handler;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import katsapov.heroes.data.entitiy.Hero;
 
 public class HeroRepository {
@@ -28,10 +30,7 @@ public class HeroRepository {
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
-
         callbac.onReauestFinished(new ArrayList<Hero>());
-
-
       }
     });
 

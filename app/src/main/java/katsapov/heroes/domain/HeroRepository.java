@@ -1,23 +1,19 @@
 package katsapov.heroes.domain;
 
-import android.os.AsyncTask;
 import java.util.List;
 
+import katsapov.heroes.data.NetworkManager;
 import katsapov.heroes.data.entitiy.Hero;
 import katsapov.heroes.data.json.HeroParser;
-import katsapov.heroes.data.network.NetworkManager;
-import org.json.JSONArray;
 
 public class HeroRepository {
-    private HeroParser heroParser;
-    private NetworkManager networkManager;
-    private List<Hero> listOfHeroes;
 
-    public List<Hero> getHeroes(int page) {
-//        AsyncTask<Void, Void, JSONArray> sss =  new NetworkManager.LoadStringsAsync().execute();
+    public static List<Hero> listOfHeroes = null;
+    public static String jsonResponse;
 
-
-//        listOfHeroes = HeroParser.parseData(sss); //сюда закинем эту строку и распарсим
+    public  static List<Hero> getHeroesList() {
+        jsonResponse = new NetworkManager.getDataStringFromApi().execute().toString();
+        HeroParser.parseData(jsonResponse);
         return listOfHeroes;
     }
 }

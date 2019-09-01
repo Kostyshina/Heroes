@@ -1,45 +1,25 @@
-package katsapov.heroes.data.network;
+package katsapov.heroes.data;
 
-
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.List;
-
-import katsapov.heroes.data.entitiy.Hero;
-import katsapov.heroes.presentaition.ui.MainActivity;
 
 import static katsapov.heroes.data.entitiy.Constants.DATA_URL;
 
 public class NetworkManager {
 
-    public static class LoadStringsAsync extends AsyncTask<Void, Void, NetworkResponse> {
-//    public static class LoadStringsAsync extends AsyncTask<Void, Void, List<Hero>> {
-
-        //@SuppressLint("StaticFieldLeak")
-        private WeakReference<MainActivity> mainActivityWeakReference;
-
-        public LoadStringsAsync(MainActivity activity) {
-            this.mainActivityWeakReference = new WeakReference(activity);
-        }
+    public static class getDataStringFromApi extends AsyncTask<Void, Void, String> {
 
         @Override
-        protected NetworkResponse doInBackground(Void... arg0) {
+        protected String doInBackground(Void... arg0) {
             HttpURLConnection connection = null;
             BufferedReader reader = null;
             String line = null;
@@ -55,21 +35,14 @@ public class NetworkManager {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-//            try {
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-            try {
-                connection.setRequestMethod("GET");
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            }
-            connection.setConnectTimeout(8000);
-            connection.setReadTimeout(8000);
             InputStream in = null;
             try {
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(8000);
+                connection.setReadTimeout(8000);
                 in = connection.getInputStream();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -83,22 +56,14 @@ public class NetworkManager {
                 }
                 response.append(line);
             }
-
             responeJson = response.toString();
             Log.d("response", response.toString());
-
-            Type listType = new TypeToken<List<Hero>>() {}.getType();
-
-            List<Hero> listOfHeroes = new Gson().fromJson(responeJson, listType);
-
-            return  new NetworkResponse();
-//            return listOfHeroes;
+            return responeJson;
         }
 
-//        @Override
-//        protected void onPostExecute(List<Hero> str) {
-//            super.onPostExecute(str);
-//          // activity.setList(str);
-//        }
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 }

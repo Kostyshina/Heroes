@@ -1,7 +1,11 @@
 package katsapov.heroes.presentaition.ui;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import katsapov.heroes.R;
 import katsapov.heroes.data.entitiy.Hero;
-import katsapov.heroes.data.network.NetworkManager;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter.OnHeroClickListener;
 import katsapov.heroes.presentaition.adapter.PaginationListener;
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private int totalPage = 10;
     private boolean isLoading = false;
     int itemCount = 0;
+    Dialog dialog;
     private List<Hero> list = new ArrayList<Hero>();
 
     @Override
@@ -39,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fireYourAsyncTask();
-
+       // fireYourAsyncTask();
+        //HeroRepository.getHeroesList();
         SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
 
@@ -57,7 +61,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mAdapter = new HeroesRecyclerAdapter(new OnHeroClickListener() {
             @Override
             public void onHeroClick(int position) {
-                mPresenter.onHeroDetailsClicked(position);
+//                mPresenter.onHeroDetailsClicked(position);
+                openDialog();
             }
         });
 
@@ -69,9 +74,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mRecyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
             @Override
             protected void loadMoreItems() {
-//                isLoading = true;
-//                currentPage++;
-//                doApiCall();
+                isLoading = true;
+                currentPage++;
+                doApiCall();
                 mPresenter.loadMore();
 
             }
@@ -124,6 +129,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }, 1500);
     }
 
+
+
+
+
+
+
+
+
+
     @Override
     public void onRefresh() {
         itemCount = 0;
@@ -133,13 +147,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         doApiCall();
     }
 
+
+
+
+
     public void setList(List<Hero> list) {
         this.list = list;
     }
 
-    private void fireYourAsyncTask() {
-        new NetworkManager.LoadStringsAsync(this).execute();
-    }
+
+
+
+//    private void fireYourAsyncTask() {
+//        new HeroRepository.NetworkManager().execute();
+//    }
 
 
     @Override
@@ -155,8 +176,33 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void showHeroDetails(Hero hero) {
-        // Todo Show Dialog Fragment
     }
+
+
+   public void openDialog(){
+       final Dialog dialog = new Dialog(this);
+       dialog.setContentView(R.layout.dialog_fragment);
+       dialog.setTitle("Title...");
+
+       TextView text = dialog.findViewById(R.id.textView);
+       text.setText("Name");
+
+       TextView text2 = dialog.findViewById(R.id.textView2);
+       text2.setText("Gender");
+
+       TextView text3 = dialog.findViewById(R.id.textView3);
+       text3.setText("Culture");
+
+       Button dialogButton = dialog.findViewById(R.id.dialogButtonOK);
+       dialogButton.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               dialog.dismiss();
+           }
+       });
+
+       dialog.show();
+   }
 
     //openDetailsActivity(){}
 }
