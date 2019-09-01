@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import katsapov.heroes.R;
@@ -17,10 +18,21 @@ import katsapov.heroes.data.entitiy.Hero;
 
 public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
+    public interface OnHeroClickListener{
+        void onHeroClick(int position);
+    }
+
     private static final int VIEW_TYPE_LOADING = 0;
     private static final int VIEW_TYPE_NORMAL = 1;
     private boolean isLoaderVisible = false;
     private List<Hero> mHeroItems;
+    private OnHeroClickListener heroRecyclerLister;
+
+
+    public HeroesRecyclerAdapter(OnHeroClickListener listener){
+        mHeroItems = new ArrayList<>();
+        heroRecyclerLister = listener;
+    }
 
     @NonNull
     @Override
@@ -40,9 +52,9 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
         holder.onBind(position);
     }
 
-    public HeroesRecyclerAdapter(List<Hero> heroItems) {
-        this.mHeroItems = heroItems;
-    }
+//    public HeroesRecyclerAdapter(List<Hero> heroItems) {
+//        this.mHeroItems = heroItems;
+//    }
 
     @Override
     public int getItemViewType(int position) {
@@ -88,9 +100,10 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
         return mHeroItems.get(position);
     }
 
-    public class ViewHolder extends BaseViewHolder {
+    public class ViewHolder extends BaseViewHolder implements View.OnClickListener {
         TextView tvName;
         TextView tvGender;
+        private int holderPosition;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -103,10 +116,17 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
 
         public void onBind(int position) {
             super.onBind(position);
+            holderPosition = position;
             Hero item = mHeroItems.get(position);
 
+            itemView.setOnClickListener(this);
             tvName.setText(item.getName());
             tvGender.setText(item.getGender());
+        }
+
+        @Override
+        public void onClick(View view) {
+            heroRecyclerLister.onHeroClick(holderPosition);
         }
     }
 
