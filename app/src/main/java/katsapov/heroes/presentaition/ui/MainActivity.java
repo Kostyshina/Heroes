@@ -3,13 +3,13 @@ package katsapov.heroes.presentaition.ui;
 import android.os.Bundle;
 import android.os.Handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
-import java.util.ArrayList;
-
 import katsapov.heroes.R;
 import katsapov.heroes.data.entitiy.Hero;
 import katsapov.heroes.data.network.NetworkManager;
@@ -28,19 +28,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private int totalPage = 10;
     private boolean isLoading = false;
     int itemCount = 0;
+    private List<Hero> list = new ArrayList<Hero>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       /* try {
-            NetworkManager.sendRequestWithHttpURLConnection();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-
-        NetworkManager.sendRequestWithHttpURLConnection(this);
+        fireYourAsyncTask();
 
         SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
@@ -82,20 +77,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
     private void doApiCall() {
-        final ArrayList<Hero> items = new ArrayList<>();
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 for (int i = 0; i < 10; i++) {
                     itemCount++;
                     Hero postItem = new Hero();
-                    postItem.setName(getString(R.string.text_title) + itemCount);
-                    postItem.setGender(getString(R.string.text_description));
-                    items.add(postItem);
+                    postItem.setName(postItem.getCulture() + itemCount); //postItem.getName()
+                    postItem.setGender(postItem.getUrl());
+                    list.add(postItem);
                 }
 
                 if (currentPage != PAGE_START) adapter.removeLoading();
-                adapter.addItems(items);
+                adapter.addItems(list);
+                int i =  list.size();
                 SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
                 swipeRefresh.setRefreshing(false);
 
@@ -117,5 +112,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         isLastPage = false;
         adapter.clear();
         doApiCall();
+    }
+
+    public void setList(List<Hero> list) {
+        this.list = list;
+    }
+
+    private void fireYourAsyncTask() {
+        new NetworkManager.LoadStringsAsync(this).execute();
     }
 }

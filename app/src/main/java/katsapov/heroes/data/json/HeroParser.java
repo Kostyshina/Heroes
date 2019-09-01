@@ -11,14 +11,14 @@ import katsapov.heroes.data.entitiy.Hero;
 
 public class HeroParser {
 
-    private JSONObject json;
-    private List<Hero> listHeroes;
+    private static JSONObject json;
+    private static List<Hero> listHeroes;
 
     public HeroParser(List<Hero> listHeroes) {
-        this.listHeroes = listHeroes;
+        HeroParser.listHeroes = listHeroes;
     }
 
-    private void parseData(JSONArray array) {
+    public static void parseData(JSONArray array) {
         for (int i = 0; i < array.length(); i++) {
             Hero superHero = new Hero();
             json = null;

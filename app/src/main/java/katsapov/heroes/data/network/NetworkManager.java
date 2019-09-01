@@ -1,10 +1,12 @@
 package katsapov.heroes.data.network;
 
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
@@ -13,72 +15,82 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
 
 import katsapov.heroes.data.entitiy.Hero;
+import katsapov.heroes.presentaition.ui.MainActivity;
 
 import static katsapov.heroes.data.entitiy.Constants.DATA_URL;
 
 public class NetworkManager {
 
-    //MAKE return string (Future*)
-    public static void sendRequestWithHttpURLConnection(final Activity activity) {
-        new Thread(new Runnable() {
-            String line;
+    public static class LoadStringsAsync extends AsyncTask<Void, Void, List<Hero>> {
+
+        @SuppressLint("StaticFieldLeak")
+        private MainActivity activity;
+
+        public LoadStringsAsync(MainActivity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        protected List<Hero> doInBackground(Void... arg0) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            String line = null;
             String responeJson;
 
-            @Override
-            public void run() {
-                HttpURLConnection connection = null;
-                BufferedReader reader = null;
-
-                try {
-                    URL uri = new URL(DATA_URL);
-                    connection = (HttpURLConnection) uri.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
-                    InputStream in = connection.getInputStream();
-                    StringBuilder response = new StringBuilder();
-                    reader = new BufferedReader(new InputStreamReader(in));
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
-                    }
-
-                    //string with data
-                    responeJson = response.toString();
-                    Log.d("response", response.toString());
-
-                    Type listType = new TypeToken<List<Hero>>() {
-                    }.getType();
-
-                    List<Hero> listOfHeroes = new Gson().fromJson(responeJson, listType);
-
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                        }
-                    });
-
-                    Log.d("listOfHeroes", String.valueOf(listOfHeroes));
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (connection != null) {
-                        connection.disconnect();
-                    }
-                }
+            URL uri = null;
+            try {
+                uri = new URL(DATA_URL);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
             }
-        }).start();
+            try {
+                connection = (HttpURLConnection) uri.openConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                connection.setRequestMethod("GET");
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            }
+            connection.setConnectTimeout(8000);
+            connection.setReadTimeout(8000);
+            InputStream in = null;
+            try {
+                in = connection.getInputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            StringBuilder response = new StringBuilder();
+            reader = new BufferedReader(new InputStreamReader(in));
+            while (true) {
+                try {
+                    if (!((line = reader.readLine()) != null)) break;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                response.append(line);
+            }
+
+            responeJson = response.toString();
+            Log.d("response", response.toString());
+
+            Type listType = new TypeToken<JsonArray>() {}.getType();
+
+            List<Hero> listOfHeroes = new Gson().fromJson(responeJson, listType);
+            return listOfHeroes;
+        }
+
+        @Override
+        protected void onPostExecute(List<Hero> str) {
+            super.onPostExecute(str);
+          // activity.setList(str);
+        }
     }
 }
