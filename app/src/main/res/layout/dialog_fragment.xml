@@ -28,6 +28,7 @@
     <TextView
         android:id="@+id/tvUrl"
         android:layout_width="match_parent"
+        android:autoLink="web"
         android:layout_height="wrap_content" />
 
     <TextView

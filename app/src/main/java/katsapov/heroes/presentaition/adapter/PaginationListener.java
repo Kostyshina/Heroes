@@ -7,7 +7,7 @@
   public abstract class PaginationListener extends RecyclerView.OnScrollListener {
 
     public static final int PAGE_START = 1;
-    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = 8;
 
     @NonNull
     private LinearLayoutManager layoutManager;
@@ -25,10 +25,8 @@
       int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
       if (!isLoading() && !isLastPage()) {
-        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-            && firstVisibleItemPosition >= 0
-            && totalItemCount >= PAGE_SIZE) {
-         //   loadMoreItems();
+        if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= PAGE_SIZE) {
+          loadMoreItems();
         }
       }
     }

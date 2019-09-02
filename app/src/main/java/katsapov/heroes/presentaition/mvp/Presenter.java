@@ -61,9 +61,7 @@ public class Presenter implements HeroContract.Presenter {
     mView.showHeroDetails(mHeroes.get(position));
   }
 
-
-  private void updateHeroes() {
+  public void updateHeroes() {
     mView.updateHeroesList(mHeroes);
-
   }
 }

@@ -13,10 +13,10 @@ public interface HeroContract {
   }
 
   interface Presenter {
-    void attachView(HeroView view);
+    void attachView(HeroContract.HeroView view);
     void detachView();
     void loadMore();
+   // void updateHeroes();
     void onHeroDetailsClicked(int position);
-
   }
 }

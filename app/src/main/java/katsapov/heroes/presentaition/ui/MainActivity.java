@@ -3,6 +3,7 @@ package katsapov.heroes.presentaition.ui;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,7 +26,7 @@ import katsapov.heroes.presentaition.mvp.HeroContract;
 
 import static katsapov.heroes.presentaition.adapter.PaginationListener.PAGE_START;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, HeroContract.HeroView {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, HeroContract.HeroView, HeroContract.Presenter {
 
     HeroContract.Presenter mPresenter;
     HeroContract.HeroView mView;
@@ -34,11 +35,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private HeroesRecyclerAdapter mAdapter;
     private int currentPage = PAGE_START;
-    private boolean isLastPage = false;
-    private int totalPage  = 10;
+    private int totalPage = 10;
     private boolean isLoading = false;
+    private boolean isLastPage = false;
     int itemCount = 0;
-    Dialog dialog;
     private List<Hero> list = new ArrayList<Hero>();
 
     @Override
@@ -47,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_main);
 
         fireYourAsyncTask();
-       // mPresenter.attachView(this);
+        // mPresenter.attachView(this);
+        attachView(this);
 
         SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefresh.setOnRefreshListener(this);
         mRecyclerView.setHasFixedSize(true);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
 
         mAdapter = new HeroesRecyclerAdapter(new OnHeroClickListener() {
@@ -67,18 +68,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onHeroClick(int position) {
 //                mPresenter.onHeroDetailsClicked(position);
                 fireYourAsyncTask();
-                Hero hero = list.get(position);
-                openDialog(hero);
-            //    showHeroDetails(hero);
+                if (position <= list.size() - 1) {
+                    Hero hero = list.get(position);
+                    openDialog(hero);
+                }
             }
         });
 
         mRecyclerView.setAdapter(mAdapter);
         doApiCall();
-
-
-
-
 
         mRecyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
             @Override
@@ -86,8 +84,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 isLoading = true;
                 currentPage++;
                 doApiCall();
-                //   mPresenter.loadMore();
-
             }
 
             @Override
@@ -103,22 +99,22 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
-
-
     private void doApiCall() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 //Presenter.loadMore();
                 if (currentPage != PAGE_START) mAdapter.removeLoading();
-                mAdapter.addItems(list);
-                int i =  list.size();
+                //  mAdapter.addItems(list);
                 SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
                 swipeRefresh.setRefreshing(false);
-
-                // check is last page or not
-                if (currentPage < totalPage) {
-                    //mAdapter.addLoading();
+                int i = list.size();
+                int currentDataPage = i / totalPage;
+                if (currentPage >= currentDataPage) {
+                    mAdapter.addItems(list);
+                }
+                if (currentPage < currentDataPage) {
+                    mAdapter.addLoading();
                 } else {
                     isLastPage = true;
                 }
@@ -126,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         }, 1500);
     }
-
 
 
     @Override
@@ -145,8 +140,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
-
-
     public void setList(List<Hero> list) {
         this.list = list;
     }
@@ -156,15 +149,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
-
-
-
     @Override
     public void updateHeroesList(List<Hero> heroesList) {
         mAdapter.addItems(heroesList);
-
     }
-
 
 
     @Override
@@ -173,21 +161,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
-
     @Override
     public void showHeroDetails(Hero hero) {
         mView.showHeroDetails(hero);
     }
-
-
-
-
-
-
-
-
-
-
 
 
     public void openDialog(Hero hero) {
@@ -210,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         tvDie.setText(obj.getDie());
 
         TextView tvUrl = dialog.findViewById(R.id.tvUrl);
-        tvUrl.setText(obj.getUrl());
+        tvUrl.setText(Html.fromHtml(obj.getUrl()));
 
         TextView tvFather = dialog.findViewById(R.id.tvFather);
         tvFather.setText(obj.getFather());
@@ -227,5 +204,26 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
 
         dialog.show();
+    }
+
+    @Override
+    public void attachView(HeroContract.HeroView view) {
+        mView = this;
+        // mPresenter.updateHeroes();
+    }
+
+    @Override
+    public void detachView() {
+
+    }
+
+    @Override
+    public void loadMore() {
+
+    }
+
+    @Override
+    public void onHeroDetailsClicked(int position) {
+
     }
 }
