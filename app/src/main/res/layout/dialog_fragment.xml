@@ -5,22 +5,41 @@
     android:orientation="vertical"
     android:padding="10dp">
 
-
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tvCulture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tvGender"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tvBorn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvDie"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvFather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tvMother"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 
     <RelativeLayout
         android:id="@+id/bottom_layout"

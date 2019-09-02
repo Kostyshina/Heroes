@@ -11,15 +11,28 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.List;
+
+import katsapov.heroes.data.entitiy.Hero;
+import katsapov.heroes.data.json.HeroParser;
+import katsapov.heroes.presentaition.ui.MainActivity;
 
 import static katsapov.heroes.data.entitiy.Constants.DATA_URL;
 
 public class NetworkManager {
 
-    public static class getDataStringFromApi extends AsyncTask<Void, Void, String> {
+    public static class getDataStringFromApi extends AsyncTask<Void, Void, List<Hero>> {
+
+        private MainActivity activity;
+        List<Hero> str;
+
+        public getDataStringFromApi(MainActivity activity) {
+            this.activity = activity;
+        }
+
 
         @Override
-        protected String doInBackground(Void... arg0) {
+        protected List<Hero> doInBackground(Void... arg0) {
             HttpURLConnection connection = null;
             BufferedReader reader = null;
             String line = null;
@@ -57,13 +70,15 @@ public class NetworkManager {
                 response.append(line);
             }
             responeJson = response.toString();
+            List<Hero>heroes =  HeroParser.parseData(responeJson);
             Log.d("response", response.toString());
-            return responeJson;
+            return heroes;
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(List<Hero> s) {
             super.onPostExecute(s);
+            activity.setList(s);
         }
     }
 }

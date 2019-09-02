@@ -7,14 +7,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import katsapov.heroes.R;
+import katsapov.heroes.data.NetworkManager;
 import katsapov.heroes.data.entitiy.Hero;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter.OnHeroClickListener;
@@ -43,8 +45,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       // fireYourAsyncTask();
-        //HeroRepository.getHeroesList();
+        fireYourAsyncTask();
+       // HeroRepository.getHeroesList();
         SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
 
@@ -62,7 +64,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public void onHeroClick(int position) {
 //                mPresenter.onHeroDetailsClicked(position);
-                openDialog();
+                fireYourAsyncTask();
+                Hero hero = list.get(position);
+                openDialog(hero);
             }
         });
 
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 isLoading = true;
                 currentPage++;
                 doApiCall();
-                mPresenter.loadMore();
+             //   mPresenter.loadMore();
 
             }
 
@@ -94,23 +98,22 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
+
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mPresenter.detachView();
     }
 
+
+
+
     private void doApiCall() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < 10; i++) {
-                    itemCount++;
-                    Hero postItem = new Hero();
-                    postItem.setName(postItem.getCulture() + itemCount); //postItem.getName()
-                    postItem.setGender(postItem.getUrl());
-                    list.add(postItem);
-                }
 
                 if (currentPage != PAGE_START) mAdapter.removeLoading();
                 mAdapter.addItems(list);
@@ -119,8 +122,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 swipeRefresh.setRefreshing(false);
 
                 // check is last page or not
-                if (currentPage < totalPage) {
-                    mAdapter.addLoading();
+                if (currentPage < list.size()) {
+                   // mAdapter.addLoading();
                 } else {
                     isLastPage = true;
                 }
@@ -128,13 +131,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         }, 1500);
     }
-
-
-
-
-
-
-
 
 
 
@@ -149,18 +145,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
 
-
-
     public void setList(List<Hero> list) {
         this.list = list;
     }
 
 
-
-
-//    private void fireYourAsyncTask() {
-//        new HeroRepository.NetworkManager().execute();
-//    }
+    private void fireYourAsyncTask() {
+       new NetworkManager.getDataStringFromApi(this).execute();
+    }
 
 
     @Override
@@ -179,19 +171,33 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
-   public void openDialog(){
+   public void openDialog(Hero hero){
+        Hero obj = hero;
        final Dialog dialog = new Dialog(this);
        dialog.setContentView(R.layout.dialog_fragment);
-       dialog.setTitle("Title...");
+       dialog.setTitle("О персонаже");
+       getIntent().getSerializableExtra("MyClass");
 
-       TextView text = dialog.findViewById(R.id.textView);
-       text.setText("Name");
+       TextView tvCulture = dialog.findViewById(R.id.tvCulture);
+       tvCulture.setText(obj.getCulture());
 
-       TextView text2 = dialog.findViewById(R.id.textView2);
-       text2.setText("Gender");
+       TextView tvGender = dialog.findViewById(R.id.tvGender);
+       tvGender.setText(obj.getGender());
 
-       TextView text3 = dialog.findViewById(R.id.textView3);
-       text3.setText("Culture");
+       TextView tvBorn = dialog.findViewById(R.id.tvBorn);
+       tvBorn.setText(obj.getBorn());
+
+       TextView tvDie = dialog.findViewById(R.id.tvDie);
+       tvDie.setText(obj.getDie());
+
+       TextView tvUrl = dialog.findViewById(R.id.tvUrl);
+       tvUrl.setText(obj.getUrl());
+
+       TextView tvFather = dialog.findViewById(R.id.tvFather);
+       tvFather.setText(obj.getFather());
+
+       TextView tvMother = dialog.findViewById(R.id.tvMother);
+       tvMother.setText(obj.getMother());
 
        Button dialogButton = dialog.findViewById(R.id.dialogButtonOK);
        dialogButton.setOnClickListener(new View.OnClickListener() {
