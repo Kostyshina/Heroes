@@ -10,58 +10,52 @@ import katsapov.heroes.presentaition.mvp.HeroRepository.HeroRequestCallbac;
 
 public class Presenter implements HeroContract.Presenter {
 
-  private HeroRepository mRepository;
-  //private HeroContract.HeroModel mRepository;
-  private HeroContract.HeroView mView;
-  private List<Hero> mHeroes;
-  private Integer currentPage;
+    private HeroRepository mRepository;
+    private HeroContract.HeroView mView;
+    private List<Hero> mHeroes;
+    private Integer currentPage;
 
-  public Presenter() {
-    currentPage = 0;
-    mHeroes = new ArrayList<Hero>();
-    mRepository = HeroRepository.getInstance();
+    public Presenter() {
+        currentPage = 0;
+        mHeroes = new ArrayList<Hero>();
+        mRepository = HeroRepository.getInstance();
 
-  }
+    }
 
-  @Override
-  public void attachView(HeroView view) {
-    mView = view;
-    updateHeroes();
-  }
+    @Override
+    public void attachView(HeroView view) {
+        mView = view;
+    }
 
 
-  @Override
-  public void detachView() {
-    mView = null;
+    @Override
+    public void detachView() {
+        mView = null;
 
-  }
+    }
 
-  @Override
-  public void loadMore() {
-    mView.showIsLoading(true);
-    currentPage++;
-    mRepository.getHeroes(currentPage, 10, new HeroRequestCallbac() {
-      @Override
-      public void onReauestFinished(List<Hero> heroes) {
+    @Override
+    public void setList(List<Hero> list) {
+        this.mHeroes = list;
+    }
 
-        mHeroes.addAll(heroes);
-        updateHeroes();
-      }
+    @Override
+    public void loadMore() {
+        mView.showIsLoading(true);
+        currentPage++;
+        mRepository.getHeroes(currentPage, 10, new HeroRequestCallbac() {
+            @Override
+            public void onReqestFinished(List<Hero> heroes) {
+                mHeroes.addAll(heroes);
+                //  updateHeroes();
+            }
 
-      @Override
-      public void onError(Exception e) {
-        mView.showIsLoading(false);
-        // Show error for user
-      }
-    });
-  }
+            @Override
+            public void onError(Exception e) {
+                mView.showIsLoading(false);
+                mView.showError(mView);
+            }
+        });
+    }
 
-  @Override
-  public void onHeroDetailsClicked(int position) {
-    mView.showHeroDetails(mHeroes.get(position));
-  }
-
-  public void updateHeroes() {
-    mView.updateHeroesList(mHeroes);
-  }
 }

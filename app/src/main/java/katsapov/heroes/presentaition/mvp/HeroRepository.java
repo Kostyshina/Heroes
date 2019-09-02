@@ -9,41 +9,37 @@ import katsapov.heroes.data.entitiy.Hero;
 
 public class HeroRepository {
 
-  private static HeroRepository INSTANCE = null;
+    private static HeroRepository INSTANCE = null;
 
-  public static HeroRepository getInstance() {
-
-    if (INSTANCE == null) {
-      INSTANCE = new HeroRepository();
+    static HeroRepository getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new HeroRepository();
+        }
+        return INSTANCE;
     }
 
-    return INSTANCE;
-  }
 
-  public void getHeroes(int page, int pagePerRequest, final HeroRequestCallbac callbac) {
-    new Handler().post(new Runnable() {
-      @Override
-      public void run() {
-
-        try {
-          Thread.sleep(1000);
-        } catch (InterruptedException e) {
-          e.printStackTrace();
-        }
-        callbac.onReauestFinished(new ArrayList<Hero>());
-      }
-    });
+    void getHeroes(int page, int pagePerRequest, final HeroRequestCallbac callbac) {
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                callbac.onReqestFinished(new ArrayList<Hero>());
+            }
+        });
 
 
-  }
+    }
 
 
-  public interface HeroRequestCallbac {
-
-    void onReauestFinished(List<Hero> heroes);
-
-    void onError(Exception e);
-  }
+    public interface HeroRequestCallbac {
+        void onReqestFinished(List<Hero> heroes);
+        void onError(Exception e);
+    }
 }
 
 

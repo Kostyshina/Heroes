@@ -14,6 +14,8 @@ import java.util.List;
 import katsapov.heroes.R;
 import katsapov.heroes.data.entitiy.Hero;
 
+import static katsapov.heroes.data.entitiy.Constants.VIEW_TYPE_LOADING;
+import static katsapov.heroes.data.entitiy.Constants.VIEW_TYPE_NORMAL;
 
 
 public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> {
@@ -22,8 +24,6 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
         void onHeroClick(int position);
     }
 
-    private static final int VIEW_TYPE_LOADING = 0;
-    private static final int VIEW_TYPE_NORMAL = 1;
     private boolean isLoaderVisible = false;
     private List<Hero> mHeroItems;
     private OnHeroClickListener heroRecyclerLister;
@@ -52,9 +52,6 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
         holder.onBind(position);
     }
 
-//    public HeroesRecyclerAdapter(List<Hero> heroItems) {
-//        this.mHeroItems = heroItems;
-//    }
 
     @Override
     public int getItemViewType(int position) {

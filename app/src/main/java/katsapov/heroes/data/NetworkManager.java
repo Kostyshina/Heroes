@@ -1,5 +1,6 @@
 package katsapov.heroes.data;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -23,6 +24,7 @@ public class NetworkManager {
 
     public static class getDataStringFromApi extends AsyncTask<Void, Void, List<Hero>> {
 
+        @SuppressLint("StaticFieldLeak")
         private MainActivity activity;
 
         public getDataStringFromApi(MainActivity activity) {
@@ -33,10 +35,10 @@ public class NetworkManager {
         @Override
         protected List<Hero> doInBackground(Void... arg0) {
             HttpURLConnection connection = null;
-            BufferedReader reader = null;
+            BufferedReader reader;
             String line = null;
             String responeJson;
-            URL uri = null;
+            URL uri;
             try {
                 uri = new URL(DATA_URL);
                 connection = (HttpURLConnection) uri.openConnection();
@@ -48,6 +50,7 @@ public class NetworkManager {
             }
             InputStream in = null;
             try {
+                assert connection != null;
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(8000);
                 connection.setReadTimeout(8000);
@@ -61,7 +64,7 @@ public class NetworkManager {
             reader = new BufferedReader(new InputStreamReader(in));
             while (true) {
                 try {
-                    if (!((line = reader.readLine()) != null)) break;
+                    if ((line = reader.readLine()) == null) break;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

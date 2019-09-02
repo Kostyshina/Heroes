@@ -11,7 +11,6 @@ import katsapov.heroes.data.entitiy.Hero;
 public class HeroParser {
     public static List<Hero> parseData(String json) {
         Type listType = new TypeToken<List<Hero>>() {}.getType();
-        List<Hero> listOfHeroes = new Gson().fromJson(json, listType);
-        return listOfHeroes;
+        return new Gson().fromJson(json, listType);
     }
 }

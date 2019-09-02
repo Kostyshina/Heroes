@@ -2,10 +2,9 @@ package katsapov.heroes.data.entitiy;
 
 public class Constants {
     public static final String DATA_URL = "https://anapioficeandfire.com/api/characters";
-
-    public static final String TAG_NAME = "name";
-    public static final String TAG_GENDER = "gender";
-    public static final String TAG_CULTURE = "culture";
-    public static final String TAG_BORN = "born";
-    public static final String TAG_DIE = "die";
+    public static final Integer TOTAL_PAGES = 10;
+    public static final int VIEW_TYPE_LOADING = 0;
+    public static final int VIEW_TYPE_NORMAL = 1;
+    public static final int PAGE_START = 1;
+    public static final int PAGE_SIZE = 10;
 }
