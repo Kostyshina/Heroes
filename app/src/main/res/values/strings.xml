@@ -3,4 +3,12 @@
     <string name="about_person">О персонаже</string>
     <string name="error">Error!</string>
     <string name="data_from_api">ListSize: %d \n Number of pages: %d</string>
+    <string name="close_dialog">Закрыть</string>
+    <string name="culture">Culture:</string>
+    <string name="gender">Gender:</string>
+    <string name="die">Die:</string>
+    <string name="born">Born:</string>
+    <string name="url">Url:</string>
+    <string name="father">Father:</string>
+    <string name="mother">Mother:</string>
 </resources>
