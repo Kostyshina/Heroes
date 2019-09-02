@@ -18,11 +18,5 @@ public interface HeroContract {
     void loadMore();
     void onHeroDetailsClicked(int position);
 
-
   }
-
-//  interface HeroModel{
-//     loadMode(int nextPage);
-//  }
-
 }

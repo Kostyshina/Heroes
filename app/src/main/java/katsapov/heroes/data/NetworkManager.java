@@ -24,7 +24,6 @@ public class NetworkManager {
     public static class getDataStringFromApi extends AsyncTask<Void, Void, List<Hero>> {
 
         private MainActivity activity;
-        List<Hero> str;
 
         public getDataStringFromApi(MainActivity activity) {
             this.activity = activity;
@@ -37,7 +36,6 @@ public class NetworkManager {
             BufferedReader reader = null;
             String line = null;
             String responeJson;
-
             URL uri = null;
             try {
                 uri = new URL(DATA_URL);
@@ -70,7 +68,7 @@ public class NetworkManager {
                 response.append(line);
             }
             responeJson = response.toString();
-            List<Hero>heroes =  HeroParser.parseData(responeJson);
+            List<Hero> heroes = HeroParser.parseData(responeJson);
             Log.d("response", response.toString());
             return heroes;
         }

@@ -3,6 +3,7 @@ package katsapov.heroes.presentaition.mvp;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import katsapov.heroes.data.entitiy.Hero;
 import katsapov.heroes.presentaition.mvp.HeroContract.HeroView;
 import katsapov.heroes.presentaition.mvp.HeroRepository.HeroRequestCallbac;
@@ -53,8 +54,6 @@ public class Presenter implements HeroContract.Presenter {
         // Show error for user
       }
     });
-
-
   }
 
   @Override
@@ -62,7 +61,6 @@ public class Presenter implements HeroContract.Presenter {
     mView.showHeroDetails(mHeroes.get(position));
   }
 
-  // Private
 
   private void updateHeroes() {
     mView.updateHeroesList(mHeroes);

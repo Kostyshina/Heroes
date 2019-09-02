@@ -66,7 +66,7 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
     }
 
     @Override
-    public int getItemCount() {
+    public  int getItemCount() {
         return mHeroItems == null ? 0 : mHeroItems.size();
     }
 

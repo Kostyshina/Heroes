@@ -28,7 +28,7 @@
         if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
             && firstVisibleItemPosition >= 0
             && totalItemCount >= PAGE_SIZE) {
-        //  loadMoreItems();
+         //   loadMoreItems();
         }
       }
     }
