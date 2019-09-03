@@ -1,61 +1,49 @@
 package katsapov.heroes.presentaition.mvp;
 
 
-import java.util.ArrayList;
+import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import java.util.List;
 
+import katsapov.heroes.data.NetworkManager;
 import katsapov.heroes.data.entitiy.Hero;
 import katsapov.heroes.presentaition.mvp.HeroContract.HeroView;
-import katsapov.heroes.presentaition.mvp.HeroRepository.HeroRequestCallbac;
+import katsapov.heroes.presentaition.ui.MainActivity;
 
 public class Presenter implements HeroContract.Presenter {
 
-    private HeroRepository mRepository;
     private HeroContract.HeroView mView;
-    private List<Hero> mHeroes;
-    private Integer currentPage;
+    private List<Hero> heroList;
 
-    public Presenter() {
-        currentPage = 0;
-        mHeroes = new ArrayList<Hero>();
-        mRepository = HeroRepository.getInstance();
-
-    }
 
     @Override
     public void attachView(HeroView view) {
         mView = view;
     }
 
-
     @Override
     public void detachView() {
         mView = null;
-
     }
 
     @Override
     public void setList(List<Hero> list) {
-        this.mHeroes = list;
+        this.heroList = list;
     }
 
     @Override
-    public void loadMore() {
-        mView.showIsLoading(true);
-        currentPage++;
-        mRepository.getHeroes(currentPage, 10, new HeroRequestCallbac() {
-            @Override
-            public void onReqestFinished(List<Hero> heroes) {
-                mHeroes.addAll(heroes);
-                //  updateHeroes();
-            }
+    public boolean isOnline(Activity activity) {
+        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 
-            @Override
-            public void onError(Exception e) {
-                mView.showIsLoading(false);
-                mView.showError(mView);
-            }
-        });
+    @Override
+    public void getDataFromApi(MainActivity activity) {
+        new NetworkManager.getDataStringFromApi(activity).execute();
     }
 
 }

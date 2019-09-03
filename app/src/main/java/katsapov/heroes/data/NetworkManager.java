@@ -42,7 +42,6 @@ public class NetworkManager {
             try {
                 uri = new URL(DATA_URL);
                 connection = (HttpURLConnection) uri.openConnection();
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {

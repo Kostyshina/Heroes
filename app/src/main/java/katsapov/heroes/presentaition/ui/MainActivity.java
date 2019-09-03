@@ -19,51 +19,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 import katsapov.heroes.R;
-import katsapov.heroes.data.NetworkManager;
 import katsapov.heroes.data.entitiy.Constants;
 import katsapov.heroes.data.entitiy.Hero;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter.OnHeroClickListener;
 import katsapov.heroes.presentaition.adapter.PaginationListener;
 import katsapov.heroes.presentaition.mvp.HeroContract;
+import katsapov.heroes.presentaition.mvp.HeroView;
 import katsapov.heroes.presentaition.mvp.Presenter;
 
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, HeroContract.HeroView {
 
     HeroContract.Presenter mPresenter;
-    HeroContract.HeroView mView;
+    HeroContract.HeroView mHeroView;
 
-    private HeroesRecyclerAdapter mAdapter;
     private int currentPage = Constants.PAGE_START;
     private boolean isLoading = false;
     private boolean isLastPage = false;
+    private boolean isHasInternetConnection = false;
     int itemCount = 0;
-    private List<Hero> listOfHeroes = new ArrayList<Hero>();
+    private List<Hero> listOfHeroes = new ArrayList<>();
+
+    private HeroesRecyclerAdapter mAdapter;
+    private SwipeRefreshLayout swipeRefresh;
+    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getDataFromApi();
         mPresenter = new Presenter();
         mPresenter.attachView(this);
 
-        SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
+        swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
 
-        RecyclerView mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-
-        mRecyclerView.setHasFixedSize(true);
-        swipeRefresh.setOnRefreshListener(this);
         mRecyclerView.setHasFixedSize(true);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
 
-
+        getDataFromApi();
         mAdapter = new HeroesRecyclerAdapter(new OnHeroClickListener() {
             @Override
             public void onHeroClick(int position) {
@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             protected void loadMoreItems() {
                 isLoading = true;
                 currentPage++;
-                doApiCall();
+                //doApiCall(PaginationListene);
             }
 
             @Override
@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                //  Presenter.loadMore();
                 if (currentPage != Constants.PAGE_START) mAdapter.removeLoading();
                 SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
                 swipeRefresh.setRefreshing(false);
@@ -127,17 +126,31 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-        itemCount = 0;
-        currentPage = Constants.PAGE_START;
-        isLastPage = false;
-        mAdapter.clear();
-        doApiCall();
+        mPresenter = new Presenter();
+        isHasInternetConnection = mPresenter.isOnline(this);
+        if (isHasInternetConnection) {
+            itemCount = 0;
+            currentPage = Constants.PAGE_START;
+            isLastPage = false;
+            mAdapter.clear();
+            doApiCall();
+        } else {
+            mAdapter.clear();
+            mHeroView = new HeroView();
+            mHeroView.showIsLoading(false, swipeRefresh);
+            showError(this, R.string.error_connection);
+            if (isHasInternetConnection) {
+                onRefresh();
+            }
+        }
     }
 
+
     @Override
-    public void showError(HeroContract.HeroView view) {
-        Snackbar.make(findViewById(android.R.id.content), R.string.error, Snackbar.LENGTH_LONG).show();
+    public void showError(HeroContract.HeroView view, int stringError) {
+        Snackbar.make(findViewById(android.R.id.content), stringError, Snackbar.LENGTH_LONG).show();
     }
+
 
     @Override
     protected void onDestroy() {
@@ -145,19 +158,32 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mPresenter.detachView();
     }
 
+
     public void setList(List<Hero> list) {
         this.listOfHeroes = list;
+        mPresenter = new Presenter();
         mPresenter.setList(list);
     }
 
+
     private void getDataFromApi() {
-        new NetworkManager.getDataStringFromApi(this).execute();
+        mPresenter = new Presenter();
+        isHasInternetConnection = mPresenter.isOnline(this);
+        if (isHasInternetConnection) {
+            mPresenter = new Presenter();
+            mPresenter.getDataFromApi(this);
+        } else {
+            showError(this, R.string.error_connection);
+        }
     }
 
 
     @Override
-    public void showIsLoading(Boolean isLoading) {
-        mView.showIsLoading(true);
+    public void showIsLoading(Boolean isLoading, SwipeRefreshLayout swipeRefreshLayout) {
+        if (false) {
+            swipeRefresh.setProgressViewOffset(false, 0, 0);
+        } else
+            swipeRefresh.setProgressViewOffset(false, 1, 2);
     }
 
 

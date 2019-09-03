@@ -11,4 +11,5 @@
     <string name="url">Url:</string>
     <string name="father">Father:</string>
     <string name="mother">Mother:</string>
+    <string name="error_connection">Ошибка соединения! \n Повторите попытку позже!</string>
 </resources>
