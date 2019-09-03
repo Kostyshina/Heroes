@@ -8,6 +8,7 @@ import android.net.NetworkInfo;
 
 import java.util.List;
 
+import katsapov.heroes.R;
 import katsapov.heroes.data.NetworkManager;
 import katsapov.heroes.data.entitiy.Hero;
 import katsapov.heroes.presentaition.mvp.HeroContract.HeroView;
@@ -15,23 +16,22 @@ import katsapov.heroes.presentaition.ui.MainActivity;
 
 public class Presenter implements HeroContract.Presenter {
 
-    private HeroContract.HeroView mView;
-    private List<Hero> heroList;
+    HeroContract.Presenter mPresenter;
+    HeroContract.HeroView mHeroView;
+    private boolean isHasInternetConnection = false;
 
 
     @Override
     public void attachView(HeroView view) {
-        mView = view;
     }
 
     @Override
     public void detachView() {
-        mView = null;
     }
 
     @Override
     public void setList(List<Hero> list) {
-        this.heroList = list;
+        List<Hero> heroList = list;
     }
 
     @Override
@@ -42,8 +42,15 @@ public class Presenter implements HeroContract.Presenter {
     }
 
     @Override
-    public void getDataFromApi(MainActivity activity) {
-        new NetworkManager.getDataStringFromApi(activity).execute();
+    public void refreshDataOnAdapter(Activity activity, MainActivity activityMain) {
+        mPresenter = new Presenter();
+        isHasInternetConnection = mPresenter.isOnline(activity);
+        if (isHasInternetConnection) {
+            mPresenter = new Presenter();
+            new NetworkManager.getDataStringFromApi(activityMain).execute();
+        } else {
+            mHeroView = new katsapov.heroes.presentaition.mvp.HeroView();
+            mHeroView.showError(activity, R.string.error_connection);
+        }
     }
-
 }

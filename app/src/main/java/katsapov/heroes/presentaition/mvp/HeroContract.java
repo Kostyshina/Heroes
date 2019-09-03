@@ -13,9 +13,8 @@ public interface HeroContract {
 
     interface HeroView {
         void showIsLoading(Boolean isLoading, SwipeRefreshLayout swipeRefreshLayout);
-        void showHeroDetails(Hero hero);
-        void showError(HeroView view, int string);
-        //void doApiCall(Activity activity, List<Hero> list, HeroesRecyclerAdapter adapter);
+        void showHeroDetails(Hero hero, Activity activity);
+        void showError(Activity activity, int stringError);
     }
 
     interface Presenter {
@@ -23,6 +22,6 @@ public interface HeroContract {
         void detachView();
         void setList(List<Hero> heroes);
         boolean isOnline(Activity activity);
-        void getDataFromApi(MainActivity activity);
+        void refreshDataOnAdapter(Activity activity, MainActivity mainActivity);
     }
 }

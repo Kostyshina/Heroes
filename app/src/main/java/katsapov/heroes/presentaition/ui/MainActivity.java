@@ -1,12 +1,7 @@
 package katsapov.heroes.presentaition.ui;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Html;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,7 +24,7 @@ import katsapov.heroes.presentaition.mvp.HeroView;
 import katsapov.heroes.presentaition.mvp.Presenter;
 
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, HeroContract.HeroView {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     HeroContract.Presenter mPresenter;
     HeroContract.HeroView mHeroView;
@@ -38,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private boolean isHasInternetConnection = false;
-    int itemCount = 0;
     private List<Hero> listOfHeroes = new ArrayList<>();
 
     private HeroesRecyclerAdapter mAdapter;
@@ -51,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_main);
 
         mPresenter = new Presenter();
-        mPresenter.attachView(this);
+        mPresenter.attachView(mHeroView);
 
         swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
@@ -63,28 +57,30 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        getDataFromApi();
+        mPresenter = new Presenter();
+        mPresenter.refreshDataOnAdapter(this, this);
         mAdapter = new HeroesRecyclerAdapter(new OnHeroClickListener() {
             @Override
             public void onHeroClick(int position) {
-                getDataFromApi();
+                mPresenter = new Presenter();
+                mPresenter.refreshDataOnAdapter(MainActivity.this, MainActivity.this);
                 if (position <= listOfHeroes.size() - 1) {
                     Hero hero = listOfHeroes.get(position);
-                    showHeroDetails(hero);
+                    mHeroView = new HeroView();
+                    mHeroView.showHeroDetails(hero, MainActivity.this);
                 }
             }
         });
 
-
         mRecyclerView.setAdapter(mAdapter);
-        doApiCall();
+        refreshDataOnAdapter();
 
         mRecyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
             @Override
             protected void loadMoreItems() {
                 isLoading = true;
                 currentPage++;
-                //doApiCall(PaginationListene);
+                refreshDataOnAdapter();
             }
 
             @Override
@@ -100,7 +96,41 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
-    private void doApiCall() {
+    @Override
+    public void onRefresh() {
+        mPresenter = new Presenter();
+        isHasInternetConnection = mPresenter.isOnline(this);
+        if (isHasInternetConnection) {
+            currentPage = Constants.PAGE_START;
+            isLastPage = false;
+            mAdapter.clear();
+            refreshDataOnAdapter();
+        } else {
+            mAdapter.clear();
+            mHeroView = new HeroView();
+            mHeroView.showIsLoading(false, swipeRefresh);
+            mHeroView.showError(this, R.string.error_connection);
+            if (isHasInternetConnection) {
+                onRefresh();
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mPresenter.detachView();
+        super.onDestroy();
+    }
+
+
+    public void setList(List<Hero> list) {
+        this.listOfHeroes = list;
+        mPresenter = new Presenter();
+        mPresenter.setList(list);
+    }
+
+
+    private void refreshDataOnAdapter() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -123,104 +153,4 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }, 1500);
     }
 
-
-    @Override
-    public void onRefresh() {
-        mPresenter = new Presenter();
-        isHasInternetConnection = mPresenter.isOnline(this);
-        if (isHasInternetConnection) {
-            itemCount = 0;
-            currentPage = Constants.PAGE_START;
-            isLastPage = false;
-            mAdapter.clear();
-            doApiCall();
-        } else {
-            mAdapter.clear();
-            mHeroView = new HeroView();
-            mHeroView.showIsLoading(false, swipeRefresh);
-            showError(this, R.string.error_connection);
-            if (isHasInternetConnection) {
-                onRefresh();
-            }
-        }
-    }
-
-
-    @Override
-    public void showError(HeroContract.HeroView view, int stringError) {
-        Snackbar.make(findViewById(android.R.id.content), stringError, Snackbar.LENGTH_LONG).show();
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mPresenter.detachView();
-    }
-
-
-    public void setList(List<Hero> list) {
-        this.listOfHeroes = list;
-        mPresenter = new Presenter();
-        mPresenter.setList(list);
-    }
-
-
-    private void getDataFromApi() {
-        mPresenter = new Presenter();
-        isHasInternetConnection = mPresenter.isOnline(this);
-        if (isHasInternetConnection) {
-            mPresenter = new Presenter();
-            mPresenter.getDataFromApi(this);
-        } else {
-            showError(this, R.string.error_connection);
-        }
-    }
-
-
-    @Override
-    public void showIsLoading(Boolean isLoading, SwipeRefreshLayout swipeRefreshLayout) {
-        if (false) {
-            swipeRefresh.setProgressViewOffset(false, 0, 0);
-        } else
-            swipeRefresh.setProgressViewOffset(false, 1, 2);
-    }
-
-
-    @Override
-    public void showHeroDetails(Hero hero) {
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_fragment);
-        dialog.setTitle(R.string.about_person);
-
-        TextView tvCulture = dialog.findViewById(R.id.tvCulture);
-        tvCulture.setText(hero.getCulture());
-
-        TextView tvGender = dialog.findViewById(R.id.tvGender);
-        tvGender.setText(hero.getGender());
-
-        TextView tvBorn = dialog.findViewById(R.id.tvBorn);
-        tvBorn.setText(hero.getBorn());
-
-        TextView tvDie = dialog.findViewById(R.id.tvDie);
-        tvDie.setText(hero.getDie());
-
-        TextView tvUrl = dialog.findViewById(R.id.tvUrl);
-        tvUrl.setText(Html.fromHtml(hero.getUrl()));
-
-        TextView tvFather = dialog.findViewById(R.id.tvFather);
-        tvFather.setText(hero.getFather());
-
-        TextView tvMother = dialog.findViewById(R.id.tvMother);
-        tvMother.setText(hero.getMother());
-
-        Button dialogButton = dialog.findViewById(R.id.dialogButtonOK);
-        dialogButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-    }
 }
