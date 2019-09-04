@@ -4,22 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import katsapov.heroes.data.entitiy.Constants;
-import katsapov.heroes.data.entitiy.Hero;
 
 public abstract class PaginationListener extends RecyclerView.OnScrollListener {
 
 
     @NonNull
     private LinearLayoutManager layoutManager;
-    private List<Hero> mHeroItems;
 
 
     protected PaginationListener(@NonNull LinearLayoutManager layoutManager) {
-        this.mHeroItems = new ArrayList<>();
         this.layoutManager = layoutManager;
     }
 

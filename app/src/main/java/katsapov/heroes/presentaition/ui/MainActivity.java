@@ -109,9 +109,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             mHeroView = new HeroView();
             mHeroView.showIsLoading(false, swipeRefresh);
             mHeroView.showError(this, R.string.error_connection);
-            if (isHasInternetConnection) {
-                onRefresh();
-            }
         }
     }
 

@@ -36,7 +36,7 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
 
     @NonNull
     @Override
-    public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case VIEW_TYPE_NORMAL:
                 return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_hero, parent, false));

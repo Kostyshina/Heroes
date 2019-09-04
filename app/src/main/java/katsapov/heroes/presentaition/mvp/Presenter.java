@@ -27,12 +27,12 @@ public class Presenter implements HeroContract.Presenter {
 
     @Override
     public void setList(List<Hero> list) {
-        List<Hero> heroList = list;
     }
 
     @Override
     public boolean isOnline(Activity activity) {
         ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
