@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void setList(List<Hero> list) {
         this.listOfHeroes = list;
         mPresenter = new Presenter();
-        mPresenter.setList(this.listOfHeroes);
+        mPresenter.setList(list);
     }
 
 
