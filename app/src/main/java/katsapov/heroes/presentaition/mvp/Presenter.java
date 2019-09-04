@@ -16,10 +16,6 @@ import katsapov.heroes.presentaition.ui.MainActivity;
 
 public class Presenter implements HeroContract.Presenter {
 
-    HeroContract.Presenter mPresenter;
-    HeroContract.HeroView mHeroView;
-    private boolean isHasInternetConnection = false;
-
 
     @Override
     public void attachView(HeroView view) {
@@ -43,13 +39,13 @@ public class Presenter implements HeroContract.Presenter {
 
     @Override
     public void getDataOnAdapter(Activity activity, MainActivity activityMain) {
-        mPresenter = new Presenter();
-        isHasInternetConnection = mPresenter.isOnline(activity);
+        HeroContract.Presenter mPresenter = new Presenter();
+        boolean isHasInternetConnection = mPresenter.isOnline(activity);
         if (isHasInternetConnection) {
             mPresenter = new Presenter();
             new NetworkManager.getDataStringFromApi(activityMain).execute();
         } else {
-            mHeroView = new katsapov.heroes.presentaition.mvp.HeroView();
+            HeroView mHeroView = new katsapov.heroes.presentaition.mvp.HeroView();
             mHeroView.showError(activity, R.string.error_connection);
         }
     }
