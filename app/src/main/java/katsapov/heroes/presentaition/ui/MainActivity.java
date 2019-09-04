@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
 
         mRecyclerView.setAdapter(mAdapter);
-        refreshDataOnRefresh();
+        updateDataAfterRefresh();
         mPresenter.setList(this.listOfHeroes);
 
         mRecyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             protected void loadMoreItems() {
                 isLoading = true;
                 currentPage++;
-                refreshDataOnRefresh();
+                updateDataAfterRefresh();
             }
 
             @Override
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             currentPage = Constants.PAGE_START;
             isLastPage = false;
             mAdapter.clear();
-            refreshDataOnRefresh();
+            updateDataAfterRefresh();
         } else {
             mAdapter.clear();
             mHeroView = new HeroView();
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     }
 
 
-    private void refreshDataOnRefresh() {
+    private void updateDataAfterRefresh() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
