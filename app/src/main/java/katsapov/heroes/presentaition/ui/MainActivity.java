@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     private HeroesRecyclerAdapter mAdapter;
     private SwipeRefreshLayout swipeRefresh;
-    private RecyclerView mRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
 
-        mRecyclerView = findViewById(R.id.recyclerView);
+        RecyclerView mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         mRecyclerView.setHasFixedSize(true);
 
@@ -123,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onDestroy();
     }
 
-    public void setList(List<Hero> list) {
+    public void setDataInList(List<Hero> list) {
         this.listOfHeroes = list;
         mPresenter = new Presenter();
         mPresenter.setList(list);

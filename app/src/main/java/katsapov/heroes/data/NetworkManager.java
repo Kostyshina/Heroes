@@ -78,7 +78,7 @@ public class NetworkManager {
         @Override
         protected void onPostExecute(List<Hero> s) {
             super.onPostExecute(s);
-            activity.setList(s);
+            activity.setDataInList(s);
         }
     }
 }
