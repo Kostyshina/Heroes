@@ -16,7 +16,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textViewName"
+            android:id="@+id/tvName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -33,7 +33,7 @@
             tools:text="Name" />
 
         <TextView
-            android:id="@+id/textViewGender"
+            android:id="@+id/tvGender"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -46,7 +46,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewName"
+            app:layout_constraintTop_toBottomOf="@+id/tvName"
             tools:text="gender" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

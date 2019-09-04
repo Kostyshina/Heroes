@@ -104,8 +104,8 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
 
         ViewHolder(View itemView) {
             super(itemView);
-            tvName = itemView.findViewById(R.id.textViewName);
-            tvGender = itemView.findViewById(R.id.textViewGender);
+            tvName = itemView.findViewById(R.id.tvName);
+            tvGender = itemView.findViewById(R.id.tvGender);
         }
 
         protected void clear() {
