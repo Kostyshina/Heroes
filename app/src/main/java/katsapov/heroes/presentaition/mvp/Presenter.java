@@ -42,7 +42,7 @@ public class Presenter implements HeroContract.Presenter {
     }
 
     @Override
-    public void refreshDataOnAdapter(Activity activity, MainActivity activityMain) {
+    public void getDataOnAdapter(Activity activity, MainActivity activityMain) {
         mPresenter = new Presenter();
         isHasInternetConnection = mPresenter.isOnline(activity);
         if (isHasInternetConnection) {

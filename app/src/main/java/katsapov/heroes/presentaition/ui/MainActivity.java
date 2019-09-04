@@ -58,12 +58,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         mRecyclerView.setLayoutManager(layoutManager);
 
         mPresenter = new Presenter();
-        mPresenter.refreshDataOnAdapter(this, this);
+        mPresenter.getDataOnAdapter(this, this);
         mAdapter = new HeroesRecyclerAdapter(new OnHeroClickListener() {
             @Override
             public void onHeroClick(int position) {
                 mPresenter = new Presenter();
-                mPresenter.refreshDataOnAdapter(MainActivity.this, MainActivity.this);
+                mPresenter.getDataOnAdapter(MainActivity.this, MainActivity.this);
                 if (position <= listOfHeroes.size() - 1) {
                     Hero hero = listOfHeroes.get(position);
                     mHeroView = new HeroView();
@@ -73,14 +73,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         });
 
         mRecyclerView.setAdapter(mAdapter);
-        refreshDataOnAdapter();
+        refreshDataOnRefresh();
+        mPresenter.setList(this.listOfHeroes);
 
         mRecyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
             @Override
             protected void loadMoreItems() {
                 isLoading = true;
                 currentPage++;
-                refreshDataOnAdapter();
+                refreshDataOnRefresh();
             }
 
             @Override
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             currentPage = Constants.PAGE_START;
             isLastPage = false;
             mAdapter.clear();
-            refreshDataOnAdapter();
+            refreshDataOnRefresh();
         } else {
             mAdapter.clear();
             mHeroView = new HeroView();
@@ -122,15 +123,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onDestroy();
     }
 
-
     public void setList(List<Hero> list) {
         this.listOfHeroes = list;
         mPresenter = new Presenter();
-        mPresenter.setList(list);
+        mPresenter.setList(this.listOfHeroes);
     }
 
 
-    private void refreshDataOnAdapter() {
+    private void refreshDataOnRefresh() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -152,5 +152,4 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         }, 1500);
     }
-
 }

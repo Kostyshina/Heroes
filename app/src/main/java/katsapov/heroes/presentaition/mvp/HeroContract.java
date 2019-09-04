@@ -22,6 +22,6 @@ public interface HeroContract {
         void detachView();
         void setList(List<Hero> heroes);
         boolean isOnline(Activity activity);
-        void refreshDataOnAdapter(Activity activity, MainActivity mainActivity);
+        void getDataOnAdapter(Activity activity, MainActivity mainActivity);
     }
 }
