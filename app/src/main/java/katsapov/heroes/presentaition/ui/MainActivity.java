@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private int currentPage = Constants.PAGE_START;
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private boolean isHasInternetConnection = false;
     private List<Hero> listOfHeroes = new ArrayList<>();
 
     private HeroesRecyclerAdapter mAdapter;
@@ -99,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onRefresh() {
         mPresenter = new Presenter();
-        isHasInternetConnection = mPresenter.isOnline(this);
+        boolean isHasInternetConnection = mPresenter.isOnline(this);
         if (isHasInternetConnection) {
             currentPage = Constants.PAGE_START;
             isLastPage = false;
