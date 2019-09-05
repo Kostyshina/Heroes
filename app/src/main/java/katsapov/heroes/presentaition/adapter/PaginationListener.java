@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import katsapov.heroes.data.entitiy.Constants;
-
 public abstract class PaginationListener extends RecyclerView.OnScrollListener {
 
 
@@ -26,7 +24,7 @@ public abstract class PaginationListener extends RecyclerView.OnScrollListener {
         int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
         if (!isLoading() && !isLastPage()) {
-            if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount >= Constants.PAGE_SIZE) {
+            if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount && firstVisibleItemPosition >= 0) {
                 loadMoreItems();
             }
         }

@@ -21,7 +21,7 @@ import static katsapov.heroes.data.entitiy.Constants.VIEW_TYPE_NORMAL;
 public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     public interface OnHeroClickListener{
-        void onHeroClick(int position);
+        void onHeroClick(Hero hero);
     }
 
     private boolean isLoaderVisible = false;
@@ -80,6 +80,9 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
 
     public void removeLoading() {
         isLoaderVisible = false;
+        if (getItemCount() == 0) {
+            return;
+        }
         int position = mHeroItems.size() - 1;
         Hero item = getItem(position);
         if (item != null) {
@@ -123,7 +126,7 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
 
         @Override
         public void onClick(View view) {
-            heroRecyclerLister.onHeroClick(holderPosition);
+            heroRecyclerLister.onHeroClick(mHeroItems.get(holderPosition));
         }
     }
 

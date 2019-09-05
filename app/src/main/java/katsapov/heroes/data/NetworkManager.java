@@ -1,8 +1,9 @@
 package katsapov.heroes.data;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,57 +11,74 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.List;
 
-import katsapov.heroes.data.entitiy.Hero;
-import katsapov.heroes.data.json.HeroParser;
-import katsapov.heroes.presentaition.ui.MainActivity;
-
-import static katsapov.heroes.data.entitiy.Constants.DATA_URL;
+import katsapov.heroes.data.entitiy.Constants;
+import katsapov.heroes.data.entitiy.Response;
+import katsapov.heroes.data.json.BaseParser;
 
 public class NetworkManager {
 
-    public static class getDataStringFromApi extends AsyncTask<Void, Void, List<Hero>> {
+    public enum RequestMethod {
+        GET("GET");
 
-        @SuppressLint("StaticFieldLeak")
-        private MainActivity activity;
+        public String value;
 
-        public getDataStringFromApi(MainActivity activity) {
-            this.activity = activity;
+        RequestMethod(String value) {
+            this.value = value;
+        }
+    }
+
+    public <Res> void makeRequest(RequestMethod requestMethod, String path, BaseParser<Res> parser, RequestCallback<Res> callback) {
+        new Request<>(parser, callback).execute(requestMethod.value, path);
+    }
+
+    private static class Request<Res> extends AsyncTask<String, Void, Request.ResponsePair<Res>> {
+
+        private RequestCallback<Res> callback;
+        private BaseParser<Res> parser;
+
+        Request(BaseParser<Res> parser, RequestCallback<Res> callback) {
+            this.parser = parser;
+            this.callback = callback;
         }
 
-
         @Override
-        protected List<Hero> doInBackground(Void... arg0) {
+        protected ResponsePair<Res> doInBackground(String... args) {
             HttpURLConnection connection = null;
             BufferedReader reader;
             String line = null;
-            String responeJson;
+            String responseJson;
+            ApiException exception = null;
             URL uri;
+            String request = Constants.BASE_URL.concat(args[1]);
+            Log.d("request", request);
             try {
-                uri = new URL(DATA_URL);
+                uri = new URL(request);
                 connection = (HttpURLConnection) uri.openConnection();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            InputStream in = null;
+            assert connection != null;
+
+            InputStream inResponse = null;
             try {
-                assert connection != null;
-                connection.setRequestMethod("GET");
+                connection.setRequestMethod(args[0]);
                 connection.setConnectTimeout(8000);
                 connection.setReadTimeout(8000);
-                in = connection.getInputStream();
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+                inResponse = connection.getInputStream();
+            } catch (Exception exc) {
+                exception = new ApiException(new Response(exc.getMessage()), exc);
+            }
+
+            if (inResponse == null) {
+                connection.disconnect();
+                return new ResponsePair<>(null, exception);
             }
             StringBuilder response = new StringBuilder();
-            reader = new BufferedReader(new InputStreamReader(in));
+            reader = new BufferedReader(new InputStreamReader(inResponse));
             while (true) {
                 try {
                     if ((line = reader.readLine()) == null) break;
@@ -69,16 +87,43 @@ public class NetworkManager {
                 }
                 response.append(line);
             }
-            responeJson = response.toString();
-            List<Hero> heroes = HeroParser.parseData(responeJson);
+            responseJson = response.toString();
+            Res responseObject = parser.parseData(responseJson);
             Log.d("response", response.toString());
-            return heroes;
+            connection.disconnect();
+            try {
+                reader.close();
+                inResponse.close();
+            } catch (IOException exc) {
+                // TODO handle somehow
+            }
+
+            return new ResponsePair<>(responseObject, null);
         }
 
         @Override
-        protected void onPostExecute(List<Hero> s) {
-            super.onPostExecute(s);
-            activity.setDataInList(s);
+        protected void onPostExecute(Request.ResponsePair<Res> res) {
+            super.onPostExecute(res);
+            if (res.exception != null) {
+                callback.onFailure(res.exception);
+            } else {
+                callback.onSuccess(res.response);
+            }
         }
+
+        private static class ResponsePair<T> {
+            private T response;
+            private ApiException exception;
+
+            ResponsePair(@Nullable T response, @Nullable ApiException exception) {
+                this.response = response;
+                this.exception = exception;
+            }
+        }
+    }
+
+    public interface RequestCallback<T> {
+        void onFailure(ApiException exception);
+        void onSuccess(T response);
     }
 }

@@ -8,9 +8,17 @@ import java.util.List;
 
 import katsapov.heroes.data.entitiy.Hero;
 
-public class HeroParser {
-    public static List<Hero> parseData(String json) {
+public class HeroParser implements BaseParser<List<Hero>> {
+
+    private Gson gson;
+
+    public HeroParser(Gson gson) {
+        this.gson = gson;
+    }
+
+    @Override
+    public List<Hero> parseData(String json) {
         Type listType = new TypeToken<List<Hero>>() {}.getType();
-        return new Gson().fromJson(json, listType);
+        return gson.fromJson(json, listType);
     }
 }
