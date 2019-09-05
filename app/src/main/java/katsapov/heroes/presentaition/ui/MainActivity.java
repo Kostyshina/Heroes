@@ -19,6 +19,7 @@ import katsapov.heroes.data.entitiy.Hero;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter.OnHeroClickListener;
 import katsapov.heroes.presentaition.adapter.PaginationListener;
+import katsapov.heroes.presentaition.adapter.SpaceItemDecoration;
 import katsapov.heroes.presentaition.mvp.HeroContract;
 import katsapov.heroes.presentaition.mvp.HeroView;
 import katsapov.heroes.presentaition.mvp.Presenter;
@@ -49,7 +50,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         swipeRefresh.setOnRefreshListener(this);
 
         RecyclerView mRecyclerView = findViewById(R.id.recyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.addItemDecoration(new SpaceItemDecoration(0, getResources().getDimensionPixelSize(R.dimen.padding_half)));
         mRecyclerView.setHasFixedSize(true);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -135,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 int i = listOfHeroes.size();
                 int currentDataPage = i / Constants.TOTAL_PAGES;
                 if (currentPage >= currentDataPage) {
-                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.data_from_api, i, currentDataPage), Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(android.R.id.content), getString(R.string.home_message_list_size, i, currentDataPage), Snackbar.LENGTH_LONG).show();
                     mAdapter.addItems(listOfHeroes);
                 }
                 if (currentPage < currentDataPage) {

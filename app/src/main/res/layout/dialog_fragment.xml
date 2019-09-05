@@ -27,7 +27,7 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/culture"
+                    android:text="@string/details_dialog_label_culture"
                     android:textColor="@color/colorTextHeader" />
 
                 <TextView
@@ -48,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/gender"
+                    android:text="@string/details_dialog_label_gender"
                     android:textColor="@color/colorTextHeader" />
 
                 <TextView
@@ -68,7 +68,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/die"
+                    android:text="@string/details_dialog_label_die"
                     android:textColor="@color/colorTextHeader" />
 
                 <TextView
@@ -89,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/born"
+                    android:text="@string/details_dialog_label_born"
                     android:textColor="@color/colorTextHeader" />
 
                 <TextView
@@ -109,7 +109,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/url"
+                    android:text="@string/details_dialog_label_url"
                     android:textColor="@color/colorTextHeader" />
 
                 <TextView
@@ -129,7 +129,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/father"
+                    android:text="@string/details_dialog_label_father"
                     android:textColor="@color/colorTextHeader" />
 
                 <TextView
@@ -149,7 +149,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/mother"
+                    android:text="@string/details_dialog_label_mother"
                     android:textColor="@color/colorTextHeader" />
 
                 <TextView
@@ -163,7 +163,7 @@
                 android:id="@+id/dialogButtonOK"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/close_dialog" />
+                android:text="@string/details_dialog_button_close" />
         </TableLayout>
     </LinearLayout>
 

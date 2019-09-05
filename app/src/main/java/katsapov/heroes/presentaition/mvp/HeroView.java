@@ -27,7 +27,7 @@ public class HeroView implements HeroContract.HeroView {
     public void showHeroDetails(final Hero hero, final Activity activity) {
         final Dialog dialog = new Dialog(activity);
         dialog.setContentView(R.layout.dialog_fragment);
-        dialog.setTitle(R.string.about_person);
+        dialog.setTitle(R.string.details_dialog_label_about_character);
 
         TextView tvCulture = dialog.findViewById(R.id.tvCulture);
         tvCulture.setText(hero.getCulture());

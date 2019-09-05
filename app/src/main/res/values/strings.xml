@@ -1,15 +1,19 @@
 <resources>
     <string name="app_name">Heroes</string>
-    <string name="about_person">О персонаже</string>
+
     <string name="error">Error!</string>
-    <string name="data_from_api">ListSize: %d \n Number of pages: %d</string>
-    <string name="close_dialog">Закрыть</string>
-    <string name="culture">Culture:</string>
-    <string name="gender">Gender:</string>
-    <string name="die">Die:</string>
-    <string name="born">Born:</string>
-    <string name="url">Url:</string>
-    <string name="father">Father:</string>
-    <string name="mother">Mother:</string>
-    <string name="error_connection">Ошибка соединения! \n Повторите попытку позже!</string>
+    <string name="error_connection">Connection error!\nTry again later!</string>
+
+    <string name="home_message_list_size">ListSize: %d\nNumber of pages: %d</string>
+
+    <!-- Details dialog -->
+    <string name="details_dialog_label_about_character">About character</string>
+    <string name="details_dialog_label_culture">Culture:</string>
+    <string name="details_dialog_label_gender">Gender:</string>
+    <string name="details_dialog_label_die">Die:</string>
+    <string name="details_dialog_label_born">Born:</string>
+    <string name="details_dialog_label_url">Url:</string>
+    <string name="details_dialog_label_father">Father:</string>
+    <string name="details_dialog_label_mother">Mother:</string>
+    <string name="details_dialog_button_close">Close</string>
 </resources>
