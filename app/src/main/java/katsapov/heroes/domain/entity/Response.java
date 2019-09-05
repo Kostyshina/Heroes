@@ -1,4 +1,4 @@
-package katsapov.heroes.data.entitiy;
+package katsapov.heroes.domain.entity;
 
 public class Response {
 

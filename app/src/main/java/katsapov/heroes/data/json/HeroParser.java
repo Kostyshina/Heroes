@@ -6,7 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import katsapov.heroes.data.entitiy.Hero;
+import katsapov.heroes.domain.entity.Hero;
 
 public class HeroParser implements BaseParser<List<Hero>> {
 

@@ -1,4 +1,4 @@
-package katsapov.heroes.presentaition.ui;
+package katsapov.heroes.presentaition;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

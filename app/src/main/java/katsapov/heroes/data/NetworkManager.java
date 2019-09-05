@@ -13,13 +13,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import katsapov.heroes.data.entitiy.Constants;
-import katsapov.heroes.data.entitiy.Response;
+import katsapov.heroes.domain.Constants;
+import katsapov.heroes.domain.entity.ApiException;
+import katsapov.heroes.domain.entity.Response;
 import katsapov.heroes.data.json.BaseParser;
 
 public class NetworkManager {
 
-    public enum RequestMethod {
+    enum RequestMethod {
         GET("GET");
 
         public String value;
@@ -29,7 +30,7 @@ public class NetworkManager {
         }
     }
 
-    public <Res> void makeRequest(RequestMethod requestMethod, String path, BaseParser<Res> parser, RequestCallback<Res> callback) {
+    <Res> void makeRequest(RequestMethod requestMethod, String path, BaseParser<Res> parser, RequestCallback<Res> callback) {
         new Request<>(parser, callback).execute(requestMethod.value, path);
     }
 

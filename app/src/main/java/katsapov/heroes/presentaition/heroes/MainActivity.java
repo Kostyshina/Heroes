@@ -1,7 +1,12 @@
-package katsapov.heroes.presentaition.ui;
+package katsapov.heroes.presentaition.heroes;
 
+import android.app.Dialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,27 +15,24 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Collections;
 import java.util.List;
 
 import katsapov.heroes.R;
-import katsapov.heroes.data.ApiException;
 import katsapov.heroes.data.NetworkManager;
-import katsapov.heroes.data.entitiy.Constants;
-import katsapov.heroes.data.entitiy.Hero;
+import katsapov.heroes.domain.Constants;
+import katsapov.heroes.domain.entity.Hero;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter.OnHeroClickListener;
 import katsapov.heroes.presentaition.adapter.PaginationListener;
 import katsapov.heroes.presentaition.adapter.SpaceItemDecoration;
-import katsapov.heroes.presentaition.mvp.HeroContract;
-import katsapov.heroes.presentaition.mvp.HeroView;
-import katsapov.heroes.presentaition.mvp.Presenter;
+import katsapov.heroes.presentaition.utils.NetworkUtils;
 
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, NetworkManager.RequestCallback<List<Hero>> {
+public class MainActivity extends AppCompatActivity implements
+        HeroContract.View,
+        SwipeRefreshLayout.OnRefreshListener{
 
-    HeroContract.Presenter mPresenter;
-    HeroContract.HeroView mHeroView;
+    HeroPresenter mPresenter;
 
     private int currentPage = Constants.PAGE_START;
     private boolean isLoading = false;
@@ -44,9 +46,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPresenter = new Presenter();
-        mHeroView = new HeroView();
-        mPresenter.attachView(mHeroView);
+        mPresenter = new HeroPresenter(new NetworkManager());
+        mPresenter.attachView(this);
 
         swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setOnRefreshListener(this);
@@ -59,17 +60,16 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mPresenter.getDataOnAdapter(this, Constants.PAGE_START, this);
+        mPresenter.getDataOnAdapter(Constants.PAGE_START);
         mAdapter = new HeroesRecyclerAdapter(new OnHeroClickListener() {
             @Override
             public void onHeroClick(Hero hero) {
-                mHeroView.showHeroDetails(hero, MainActivity.this);
+                showHeroDetails(hero);
             }
         });
 
         mRecyclerView.setAdapter(mAdapter);
         updateDataAfterRefresh();
-        mPresenter.setList(Collections.<Hero>emptyList());
 
         mRecyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
             @Override
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
-        boolean isHasInternetConnection = mPresenter.isOnline(this);
+        boolean isHasInternetConnection = NetworkUtils.isConnected(this);
         if (isHasInternetConnection) {
             currentPage = Constants.PAGE_START;
             isLastPage = false;
@@ -102,8 +102,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             updateDataAfterRefresh();
         } else {
             mAdapter.clear();
-            mHeroView.showIsLoading(false, swipeRefresh);
-            mHeroView.showError(this, R.string.error_connection);
+            showError(getString(R.string.error_connection));
         }
     }
 
@@ -113,32 +112,78 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onDestroy();
     }
 
-    public void setDataInList(List<Hero> list) {
-        mPresenter.setList(list);
-    }
-
     @Override
-    public void onFailure(ApiException exc) {
+    public void updateList(List<Hero> heroes) {
         mAdapter.removeLoading();
-        SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
         swipeRefresh.setRefreshing(false);
-        Toast.makeText(this, exc.getResponse().getMessage(), Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onSuccess(List<Hero> response) {
-        mAdapter.removeLoading();
-        SwipeRefreshLayout swipeRefresh = findViewById(R.id.swipeRefresh);
-        swipeRefresh.setRefreshing(false);
-        int size = response.size();
+        int size = heroes.size();
         if (size < Constants.PAGE_SIZE) {
             Snackbar.make(findViewById(android.R.id.content), getString(R.string.home_message_list_size, size, currentPage), Snackbar.LENGTH_LONG).show();
         }
-        mAdapter.addItems(response);
+        mAdapter.addItems(heroes);
         isLoading = false;
     }
 
     private void updateDataAfterRefresh() {
-        mPresenter.getDataOnAdapter(MainActivity.this, currentPage, this);
+        mPresenter.getDataOnAdapter(currentPage);
+    }
+
+    @Override
+    public void showLoader(boolean isLoading) {
+        swipeRefresh.setProgressViewOffset(false, 1, 2);
+    }
+
+    @Override
+    public void showHeroDetails(final Hero hero) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_fragment);
+        dialog.setTitle(R.string.details_dialog_label_about_character);
+
+        TextView tvCulture = dialog.findViewById(R.id.tvCulture);
+        tvCulture.setText(hero.getCulture());
+
+        TextView tvGender = dialog.findViewById(R.id.tvGender);
+        tvGender.setText(hero.getGender());
+
+        TextView tvBorn = dialog.findViewById(R.id.tvBorn);
+        tvBorn.setText(hero.getBorn());
+
+        TextView tvDie = dialog.findViewById(R.id.tvDie);
+        tvDie.setText(hero.getDie());
+
+        TextView tvUrl = dialog.findViewById(R.id.tvUrl);
+        tvUrl.setText(hero.getUrl());
+
+        tvUrl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("katsapov.Browser");
+                intent.setData(Uri.parse(hero.getUrl()));
+                startActivity(intent);
+            }
+        });
+
+        TextView tvFather = dialog.findViewById(R.id.tvFather);
+        tvFather.setText(hero.getFather());
+
+        TextView tvMother = dialog.findViewById(R.id.tvMother);
+        tvMother.setText(hero.getMother());
+
+        Button dialogButton = dialog.findViewById(R.id.dialogButtonOK);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+
+    @Override
+    public void showError(String message) {
+        mAdapter.removeLoading();
+        swipeRefresh.setRefreshing(false);
+        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG).show();
     }
 }

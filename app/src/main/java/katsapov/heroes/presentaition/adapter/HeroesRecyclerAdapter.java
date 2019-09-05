@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import katsapov.heroes.R;
-import katsapov.heroes.data.entitiy.Hero;
-
-import static katsapov.heroes.data.entitiy.Constants.VIEW_TYPE_LOADING;
-import static katsapov.heroes.data.entitiy.Constants.VIEW_TYPE_NORMAL;
+import katsapov.heroes.domain.entity.Hero;
 
 
 public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> {
+
+    private static final int VIEW_TYPE_NORMAL = R.layout.item_hero;
+    private static final int VIEW_TYPE_LOADING = R.layout.item_loading;
 
     public interface OnHeroClickListener{
         void onHeroClick(Hero hero);
@@ -37,13 +37,10 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
     @NonNull
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        switch (viewType) {
-            case VIEW_TYPE_NORMAL:
-                return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_hero, parent, false));
-            case VIEW_TYPE_LOADING:
-                return new ProgressHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false));
-            default:
-                return null;
+        if (viewType == VIEW_TYPE_LOADING) {
+            return new ProgressHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_loading, parent, false));
+        } else {
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_hero, parent, false));
         }
     }
 
