@@ -2,7 +2,7 @@ package katsapov.heroes.presentaition.heroes;
 
 import java.util.List;
 
-import katsapov.heroes.domain.entity.Hero;
+import katsapov.heroes.data.entity.Hero;
 import katsapov.heroes.presentaition.base.BaseView;
 
 public interface HeroContract {
@@ -13,6 +13,6 @@ public interface HeroContract {
     }
 
     interface Presenter {
-        void getDataOnAdapter(int page);
+        void loadHeroes(int page);
     }
 }

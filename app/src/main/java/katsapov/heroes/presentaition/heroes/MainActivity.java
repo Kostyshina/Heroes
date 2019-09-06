@@ -18,9 +18,9 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.List;
 
 import katsapov.heroes.R;
-import katsapov.heroes.data.NetworkManager;
+import katsapov.heroes.data.network.NetworkManager;
 import katsapov.heroes.domain.Constants;
-import katsapov.heroes.domain.entity.Hero;
+import katsapov.heroes.data.entity.Hero;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter.OnHeroClickListener;
 import katsapov.heroes.presentaition.adapter.PaginationListener;
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mPresenter.getDataOnAdapter(Constants.PAGE_START);
+        mPresenter.loadHeroes(Constants.PAGE_START);
         mAdapter = new HeroesRecyclerAdapter(new OnHeroClickListener() {
             @Override
             public void onHeroClick(Hero hero) {
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void updateDataAfterRefresh() {
-        mPresenter.getDataOnAdapter(currentPage);
+        mPresenter.loadHeroes(currentPage);
     }
 
     @Override

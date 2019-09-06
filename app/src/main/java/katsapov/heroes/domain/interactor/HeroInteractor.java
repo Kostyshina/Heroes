@@ -3,8 +3,8 @@ package katsapov.heroes.domain.interactor;
 import java.util.List;
 
 import katsapov.heroes.data.HeroRepository;
-import katsapov.heroes.data.NetworkManager;
-import katsapov.heroes.domain.entity.Hero;
+import katsapov.heroes.data.entity.Hero;
+import katsapov.heroes.data.network.RequestCallback;
 
 public class HeroInteractor {
 
@@ -14,7 +14,7 @@ public class HeroInteractor {
         this.repository = repository;
     }
 
-    public void getHeroesList(int page, NetworkManager.RequestCallback<List<Hero>> callback) {
+    public void getHeroesList(int page, RequestCallback<List<Hero>> callback) {
         repository.getCharactersList(page, callback);
     }
 }

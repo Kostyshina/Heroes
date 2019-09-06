@@ -1,4 +1,4 @@
-package katsapov.heroes.data;
+package katsapov.heroes.data.network;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -14,13 +14,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import katsapov.heroes.domain.Constants;
-import katsapov.heroes.domain.entity.ApiException;
-import katsapov.heroes.domain.entity.Response;
 import katsapov.heroes.data.json.BaseParser;
 
 public class NetworkManager {
 
-    enum RequestMethod {
+    public enum RequestMethod {
         GET("GET");
 
         public String value;
@@ -30,7 +28,7 @@ public class NetworkManager {
         }
     }
 
-    <Res> void makeRequest(RequestMethod requestMethod, String path, BaseParser<Res> parser, RequestCallback<Res> callback) {
+    public <Res> void makeRequest(RequestMethod requestMethod, String path, BaseParser<Res> parser, RequestCallback<Res> callback) {
         new Request<>(parser, callback).execute(requestMethod.value, path);
     }
 
@@ -121,10 +119,5 @@ public class NetworkManager {
                 this.exception = exception;
             }
         }
-    }
-
-    public interface RequestCallback<T> {
-        void onFailure(ApiException exception);
-        void onSuccess(T response);
     }
 }

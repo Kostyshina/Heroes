@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 
 import java.util.List;
 
+import katsapov.heroes.data.entity.Hero;
 import katsapov.heroes.data.json.HeroParser;
+import katsapov.heroes.data.network.NetworkManager;
+import katsapov.heroes.data.network.RequestCallback;
 import katsapov.heroes.domain.Constants;
-import katsapov.heroes.domain.entity.Hero;
 
 public class HeroRepository {
 
@@ -18,7 +20,7 @@ public class HeroRepository {
         this.networkManager = networkManager;
     }
 
-    public void getCharactersList(int page, NetworkManager.RequestCallback<List<Hero>> callback) {
+    public void getCharactersList(int page, RequestCallback<List<Hero>> callback) {
         String request = Constants.CHARACTERS_ENDPOINT
                 .concat("?")
                 .concat(Constants.CHARACTERS_PARAM_PAGE).concat(String.valueOf(page))

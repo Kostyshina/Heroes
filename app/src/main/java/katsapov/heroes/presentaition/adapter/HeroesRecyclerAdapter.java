@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import katsapov.heroes.R;
-import katsapov.heroes.domain.entity.Hero;
+import katsapov.heroes.data.entity.Hero;
 
 
 public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> {

@@ -1,4 +1,4 @@
-package katsapov.heroes.domain.entity;
+package katsapov.heroes.data.entity;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

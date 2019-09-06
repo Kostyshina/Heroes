@@ -3,15 +3,15 @@ package katsapov.heroes.presentaition.heroes;
 import java.util.List;
 
 import katsapov.heroes.data.HeroRepository;
-import katsapov.heroes.data.NetworkManager;
-import katsapov.heroes.domain.entity.ApiException;
-import katsapov.heroes.domain.entity.Hero;
+import katsapov.heroes.data.network.NetworkManager;
+import katsapov.heroes.data.network.ApiException;
+import katsapov.heroes.data.entity.Hero;
+import katsapov.heroes.data.network.RequestCallback;
 import katsapov.heroes.domain.interactor.HeroInteractor;
 import katsapov.heroes.presentaition.base.BasePresenter;
 
 public class HeroPresenter extends BasePresenter<HeroContract.View> implements
-        HeroContract.Presenter,
-        NetworkManager.RequestCallback<List<Hero>> {
+        HeroContract.Presenter {
 
     private HeroInteractor heroInteractor;
 
@@ -20,17 +20,18 @@ public class HeroPresenter extends BasePresenter<HeroContract.View> implements
     }
 
     @Override
-    public void getDataOnAdapter(int page) {
-        heroInteractor.getHeroesList(page, this);
-    }
+    public void loadHeroes(int page) {
+        heroInteractor.getHeroesList(page,
+                new RequestCallback<List<Hero>>() {
+                    @Override
+                    public void onFailure(ApiException exception) {
+                        mView.showError(exception.getMessage());
+                    }
 
-    @Override
-    public void onFailure(ApiException exception) {
-        mView.showError(exception.getMessage());
-    }
-
-    @Override
-    public void onSuccess(List<Hero> response) {
-        mView.updateList(response);
+                    @Override
+                    public void onSuccess(List<Hero> response) {
+                        mView.updateList(response);
+                    }
+                });
     }
 }
