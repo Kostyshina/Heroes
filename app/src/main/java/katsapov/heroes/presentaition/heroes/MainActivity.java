@@ -19,7 +19,6 @@ import java.util.List;
 
 import katsapov.heroes.R;
 import katsapov.heroes.data.network.NetworkManager;
-import katsapov.heroes.domain.Constants;
 import katsapov.heroes.data.entity.Hero;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter;
 import katsapov.heroes.presentaition.adapter.HeroesRecyclerAdapter.OnHeroClickListener;
@@ -34,8 +33,6 @@ public class MainActivity extends AppCompatActivity implements
 
     HeroPresenter mPresenter;
 
-    private int currentPage = Constants.PAGE_START;
-    private boolean isLoading = false;
     private boolean isLastPage = false;
 
     private HeroesRecyclerAdapter mAdapter;
@@ -60,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mPresenter.loadHeroes(Constants.PAGE_START);
         mAdapter = new HeroesRecyclerAdapter(new OnHeroClickListener() {
             @Override
             public void onHeroClick(Hero hero) {
@@ -74,9 +70,8 @@ public class MainActivity extends AppCompatActivity implements
         mRecyclerView.addOnScrollListener(new PaginationListener(layoutManager) {
             @Override
             protected void loadMoreItems() {
-                isLoading = true;
-                currentPage++;
-                updateDataAfterRefresh();
+                mAdapter.addLoading();
+                mPresenter.loadNextHeroes();
             }
 
             @Override
@@ -86,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements
 
             @Override
             public boolean isLoading() {
-                return isLoading;
+                return mAdapter.isLoadingVisible();
             }
         });
     }
@@ -95,13 +90,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onRefresh() {
         boolean isHasInternetConnection = NetworkUtils.isConnected(this);
+        mAdapter.clear();
         if (isHasInternetConnection) {
-            currentPage = Constants.PAGE_START;
-            isLastPage = false;
-            mAdapter.clear();
             updateDataAfterRefresh();
         } else {
-            mAdapter.clear();
             showError(getString(R.string.error_connection));
         }
     }
@@ -113,19 +105,19 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void updateList(List<Hero> heroes) {
+    public void updateList(List<Hero> heroes, int currentPage, boolean isLastPage) {
         mAdapter.removeLoading();
         swipeRefresh.setRefreshing(false);
-        int size = heroes.size();
-        if (size < Constants.PAGE_SIZE) {
-            Snackbar.make(findViewById(android.R.id.content), getString(R.string.home_message_list_size, size, currentPage), Snackbar.LENGTH_LONG).show();
-        }
+        this.isLastPage = isLastPage;
         mAdapter.addItems(heroes);
-        isLoading = false;
+
+        if (isLastPage) {
+            Snackbar.make(findViewById(android.R.id.content), getString(R.string.home_message_list_size, mAdapter.getItemCount(), currentPage), Snackbar.LENGTH_LONG).show();
+        }
     }
 
     private void updateDataAfterRefresh() {
-        mPresenter.loadHeroes(currentPage);
+        mPresenter.reloadHeroes();
     }
 
     @Override

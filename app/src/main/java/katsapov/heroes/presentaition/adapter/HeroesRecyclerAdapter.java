@@ -49,11 +49,10 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
         holder.onBind(position);
     }
 
-
     @Override
     public int getItemViewType(int position) {
         if (isLoaderVisible) {
-            return position == mHeroItems.size() - 1 ? VIEW_TYPE_LOADING : VIEW_TYPE_NORMAL;
+            return position == getItemCount() - 1 ? VIEW_TYPE_LOADING : VIEW_TYPE_NORMAL;
         } else {
             return VIEW_TYPE_NORMAL;
         }
@@ -72,15 +71,20 @@ public class HeroesRecyclerAdapter extends RecyclerView.Adapter<BaseViewHolder> 
     public void addLoading() {
         isLoaderVisible = true;
         mHeroItems.add(new Hero());
-        notifyItemInserted(mHeroItems.size() - 1);
+        notifyItemInserted(getItemCount());
+    }
+
+    public boolean isLoadingVisible() {
+        return isLoaderVisible;
     }
 
     public void removeLoading() {
+        int itemCount = getItemCount();
         isLoaderVisible = false;
-        if (getItemCount() == 0) {
+        if (itemCount == 0) {
             return;
         }
-        int position = mHeroItems.size() - 1;
+        int position = itemCount - 1;
         Hero item = getItem(position);
         if (item != null) {
             mHeroItems.remove(position);

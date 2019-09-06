@@ -9,10 +9,11 @@ public interface HeroContract {
 
     interface View extends BaseView {
         void showHeroDetails(Hero hero);
-        void updateList(List<Hero> heroes);
+        void updateList(List<Hero> heroes, int currentPage, boolean isLastPage);
     }
 
     interface Presenter {
-        void loadHeroes(int page);
+        void reloadHeroes();
+        void loadNextHeroes();
     }
 }
